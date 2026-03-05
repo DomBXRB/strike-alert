@@ -2,9 +2,9 @@
   "name": "strike-alert",
   "version": "1.0.0",
   "description": "Nuclear and missile threat monitoring PWA",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "monitor": "node monitor.js",
     "dev": "concurrently \"node server.js\" \"node monitor.js\"",
     "build": "echo 'Static frontend — no build needed'"
