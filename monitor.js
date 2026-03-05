@@ -53,7 +53,7 @@ const TIER1_ELEVATED = [
 ];
 
 // Points per tier
-const TIER_POINTS = { 3: 100, 2: 40, 1: 10 };
+const TIER_POINTS = { 3: 100, 2: 40, 1: 20 };
 
 // ─── Seismic Watch Zones (lat, lon) ───────────────────────────────────────────
 const SEISMIC_ZONES = [
