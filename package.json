@@ -1,0 +1,23 @@
+{
+  "name": "strike-alert",
+  "version": "1.0.0",
+  "description": "Nuclear and missile threat monitoring PWA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "monitor": "node monitor.js",
+    "dev": "concurrently \"node server.js\" \"node monitor.js\"",
+    "build": "echo 'Static frontend — no build needed'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0",
+    "rss-parser": "^3.13.0",
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

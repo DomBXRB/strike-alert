@@ -1,0 +1,16 @@
+{
+  "level": 0,
+  "label": "NORMAL",
+  "score": 0,
+  "previousLevel": 0,
+  "levelChangedAt": null,
+  "checkFrequency": 30,
+  "lastChecked": null,
+  "nextCheck": null,
+  "sourcesChecked": 0,
+  "sourcesFailed": 0,
+  "articles": [],
+  "seismicEvents": [],
+  "uptime": 0,
+  "startedAt": null
+}

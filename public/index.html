@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#00ff88" />
+  <meta name="description" content="Nuclear and missile threat monitoring. Early warning before government alerts fire." />
+
+  <!-- PWA / Apple -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="StrikeAlert" />
+
+  <title>StrikeAlert — Nuclear Threat Monitor</title>
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Favicon placeholder — swap with real icon -->
+  <link rel="icon" type="image/png" href="/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+
+  <style>
+    /* ── Base reset + global font ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent:   #00ff88;
+      --bg:       #080808;
+      --bg2:      #0f0f0f;
+      --bg3:      #161616;
+      --border:   #222;
+      --text:     #e0e0e0;
+      --dim:      #666;
+      --font:     'Courier New', Courier, monospace;
+    }
+
+    html, body {
+      background: var(--bg);
+      color:      var(--text);
+      font-family: var(--font);
+      font-size:  16px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #root { min-height: 100vh; }
+
+    /* ── Critical-level screen flash overlay ── */
+    @keyframes screen-flash {
+      0%   { opacity: 0; }
+      10%  { opacity: 0.35; }
+      20%  { opacity: 0; }
+      30%  { opacity: 0.25; }
+      100% { opacity: 0; }
+    }
+    .screen-flash {
+      position: fixed;
+      inset: 0;
+      border: 3px solid #ff0000;
+      pointer-events: none;
+      z-index: 9999;
+      animation: screen-flash 1.2s ease-in-out;
+    }
+
+    /* ── Pulse animation for threat dot ── */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1);   opacity: 1; }
+      50%       { transform: scale(1.4); opacity: 0.6; }
+    }
+    .pulse { animation: pulse 1.2s ease-in-out infinite; }
+
+    /* ── Loading spinner shown while React boots ── */
+    #boot-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 20px;
+      font-family: var(--font);
+      color: var(--accent);
+      letter-spacing: 0.12em;
+    }
+    #boot-screen .logo   { font-size: 1.6rem; font-weight: bold; }
+    #boot-screen .status { font-size: 0.8rem; color: var(--dim);  }
+
+    @keyframes blink { 50% { opacity: 0; } }
+    #boot-screen .cursor {
+      display: inline-block;
+      animation: blink 1s step-end infinite;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Shown until React mounts -->
+<div id="boot-screen">
+  <div class="logo">&#9888; STRIKEALERT</div>
+  <div class="status">INITIALIZING THREAT MONITOR<span class="cursor">_</span></div>
+</div>
+
+<div id="root"></div>
+
+<!-- React + Babel (no build step required) -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- App entry point -->
+<script type="text/babel" src="/app.jsx"></script>
+
+<script>
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(reg => console.log('SW registered, scope:', reg.scope))
+      .catch(err => console.warn('SW registration failed:', err));
+  }
+</script>
+
+</body>
+</html>
