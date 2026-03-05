@@ -1,37 +1,42 @@
 /**
  * StrikeAlert — index.js
  * Single entry point for Hostinger deployment.
- * Forks server.js and monitor.js as child processes and
- * automatically restarts either one if it crashes.
+ *
+ * Hostinger routes traffic to whichever process binds process.env.PORT.
+ * server.js is required directly (same process, same port binding) so
+ * Hostinger's proxy sees it immediately.
+ * monitor.js is launched as a child process via spawn() and auto-restarts
+ * on crash.
  */
 
 'use strict';
 
-const { fork } = require('child_process');
-const path     = require('path');
+const { spawn } = require('child_process');
+const path      = require('path');
 
-const PROCESSES = [
-  { name: 'server',  file: 'server.js'  },
-  { name: 'monitor', file: 'monitor.js' },
-];
+// ─── Start monitor as a child process ────────────────────────────────────────
 
-// Minimum ms between restarts — prevents tight crash loops
 const RESTART_DELAY_MS = 2000;
 
-function spawn(entry) {
-  const child = fork(path.join(__dirname, entry.file), [], {
-    stdio: 'inherit', // pipe child stdout/stderr to this process
+function startMonitor() {
+  const child = spawn(process.execPath, [path.join(__dirname, 'monitor.js')], {
+    stdio: 'inherit',
+    env:   process.env,
   });
 
-  console.log(`[${new Date().toISOString()}] [${entry.name}] started (pid ${child.pid})`);
+  console.log(`[${new Date().toISOString()}] [monitor] started (pid ${child.pid})`);
 
   child.on('exit', (code, signal) => {
     console.error(
-      `[${new Date().toISOString()}] [${entry.name}] exited ` +
+      `[${new Date().toISOString()}] [monitor] exited ` +
       `(code=${code ?? '—'} signal=${signal ?? '—'}) — restarting in ${RESTART_DELAY_MS}ms`
     );
-    setTimeout(() => spawn(entry), RESTART_DELAY_MS);
+    setTimeout(startMonitor, RESTART_DELAY_MS);
   });
 }
 
-PROCESSES.forEach(spawn);
+startMonitor();
+
+// ─── Start server in this process (binds PORT for Hostinger) ─────────────────
+
+require('./server.js');
